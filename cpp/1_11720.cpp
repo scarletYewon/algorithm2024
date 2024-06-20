@@ -1,5 +1,6 @@
 #include <iostream>
 using namespace std;
+// 첫줄에 받은 갯수만큼 둘째줄에 수를 입력받고 받은 값들을 모두 더해 출력함
 
 int main(){
     int n;
