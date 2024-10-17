@@ -1,73 +1,80 @@
-# Hoare Partition 기반 퀵소트
-def quicksort_hoare(arr, low, high, result):
-    if low >= high:
-        return
-    p = partition_hoare(arr, low, high, result)
-    quicksort_hoare(arr, low, p, result)
-    quicksort_hoare(arr, p + 1, high, result)
+import sys
+sys.setrecursionlimit(10000)
 
-def partition_hoare(arr, low, high, result):
-    pivot = arr[low]
+lomuto_comp_count = 0
+hoare_comp_count = 0
+lomuto_swap_count = 0
+hoare_swap_count = 0
+
+def swap_elements(a, b):
+    return b, a
+
+def lomuto_partition(a, low, high):
+    global lomuto_comp_count, lomuto_swap_count
+    pivot = a[low]
+    j = low
+    for i in range(low + 1, high + 1):
+        lomuto_comp_count += 1
+        if a[i] < pivot:
+            j += 1
+            lomuto_swap_count += 1
+            a[i], a[j] = swap_elements(a[i], a[j])
+    lomuto_swap_count += 1
+    a[low], a[j] = swap_elements(a[low], a[j])
+    return j
+
+def hoare_partition(a, low, high):
+    global hoare_comp_count, hoare_swap_count
+    pivot = a[low]
     i = low - 1
     j = high + 1
     while True:
         while True:
+            hoare_comp_count += 1
             i += 1
-            result['comparisons_hoare'] += 1
-            if arr[i] >= pivot:
+            if a[i] >= pivot:
                 break
         while True:
+            hoare_comp_count += 1
             j -= 1
-            result['comparisons_hoare'] += 1
-            if arr[j] <= pivot:
+            if a[j] <= pivot:
                 break
-        if i >= j:
+        if i < j:
+            hoare_swap_count += 1
+            a[i], a[j] = swap_elements(a[i], a[j])
+        else:
             return j
-        arr[i], arr[j] = arr[j], arr[i]
-        result['swaps_hoare'] += 1
 
-# Lomuto Partition 기반 퀵소트
-def quicksort_lomuto(arr, low, high, result):
-    if low >= high:
-        return
-    p = partition_lomuto(arr, low, high, result)
-    quicksort_lomuto(arr, low, p - 1, result)
-    quicksort_lomuto(arr, p + 1, high, result)
+def quick_sort_lomuto(v, low, high):
+    if low < high:
+        pivotPos = lomuto_partition(v, low, high)
+        quick_sort_lomuto(v, low, pivotPos - 1)
+        quick_sort_lomuto(v, pivotPos + 1, high)
 
-def partition_lomuto(arr, low, high, result):
-    pivot = arr[low]
-    j = low
-    for i in range(low + 1, high + 1):
-        result['comparisons_lomuto'] += 1
-        if arr[i] < pivot:
-            j += 1
-            arr[i], arr[j] = arr[j], arr[i]
-            result['swaps_lomuto'] += 1
-    arr[low], arr[j] = arr[j], arr[low]
-    result['swaps_lomuto'] += 1
-    return j
+def quick_sort_hoare(v, low, high):
+    if low < high:
+        pivotPos = hoare_partition(v, low, high)
+        quick_sort_hoare(v, low, pivotPos)
+        quick_sort_hoare(v, pivotPos + 1, high)
 
-# 테스트 데이터 입력 및 처리
-def process_test_case(test_case):
-    result = {
-        'swaps_hoare': 0,
-        'comparisons_hoare': 0,
-        'swaps_lomuto': 0,
-        'comparisons_lomuto': 0
-    }
+def main():
+    global lomuto_comp_count, lomuto_swap_count, hoare_comp_count, hoare_swap_count
+    t = int(input())  
+    for _ in range(t):
+        lomuto_comp_count = 0
+        lomuto_swap_count = 0
+        hoare_comp_count = 0
+        hoare_swap_count = 0
 
-    n = test_case[0]
-    arr1 = test_case[1:]  # Hoare용 배열 복사
-    arr2 = arr1[:]  # Lomuto용 배열 복사
+        input_data = list(map(int, input().split())) 
+        count = input_data[0]  
+        nums_lomuto = input_data[1:] 
+        nums_hoare = nums_lomuto[:] 
 
-    quicksort_hoare(arr1, 0, n - 1, result)
-    quicksort_lomuto(arr2, 0, n - 1, result)
+        quick_sort_lomuto(nums_lomuto, 0, count - 1)
+        quick_sort_hoare(nums_hoare, 0, count - 1)
+        
+        print(f"{hoare_swap_count} {lomuto_swap_count} {hoare_comp_count} {lomuto_comp_count}")
 
-    return result
-
-# 테스트 데이터 실행
-t = int(input())  # 테스트 케이스 수 입력
-for _ in range(t):
-    test_case = list(map(int, input().split()))
-    result = process_test_case(test_case)
-    print(result['swaps_hoare'], result['swaps_lomuto'], result['comparisons_hoare'], result['comparisons_lomuto'])
+if __name__ == "__main__":
+    main()
