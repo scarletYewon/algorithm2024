@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/yewon/Desktop/Github/Doit-algorithm/algolab/5주차",
-      "program": "/Users/yewon/Desktop/Github/Doit-algorithm/algolab/5주차/build/Debug/outDebug"
+      "cwd": "/Users/yewon/Desktop/Github/Doit-algorithm/algolab/12주차",
+      "program": "/Users/yewon/Desktop/Github/Doit-algorithm/algolab/12주차/build/Debug/outDebug"
     }
   ]
 }
